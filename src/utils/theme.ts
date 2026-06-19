@@ -1,0 +1,41 @@
+export type Theme = "dark" | "light";
+
+export const darkVars = {
+  "--color-bg":            "#0A0A0F",
+  "--color-surface":       "#16161F",
+  "--color-elevated":      "#1E1E2E",
+  "--color-overlay":       "#252535",
+  "--color-border":        "#2A2A3E",
+  "--color-border-hover":  "#3A3A5C",
+  "--color-accent":        "#7C3AED",
+  "--color-accent-hover":  "#8B5CF6",
+  "--color-cyan":          "#22D3EE",
+  "--color-text":          "#F1F0FF",
+  "--color-text-sub":      "#9B9BC0",
+  "--color-text-muted":    "#5C5C7A",
+  "--color-ai-bubble":     "#1E1E2E",
+  "--color-ai-bubble-border": "#2A2A3E",
+  "--color-sidebar":       "#111118",
+  "--color-input-bg":      "#1E1E2E",
+  "--shadow-glow":         "0 0 20px rgba(124,58,237,0.4)",
+} as const;
+
+export const lightVars = {
+  "--color-bg":            "#F5F4FF",
+  "--color-surface":       "#FFFFFF",
+  "--color-elevated":      "#EEF0FF",
+  "--color-overlay":       "#E6E8FF",
+  "--color-border":        "#D4D0F0",
+  "--color-border-hover":  "#B8B2E8",
+  "--color-accent":        "#7C3AED",
+  "--color-accent-hover":  "#6D28D9",
+  "--color-cyan":          "#0891B2",
+  "--color-text":          "#0A0A1A",
+  "--color-text-sub":      "#4A4870",
+  "--color-text-muted":    "#8A88AA",
+  "--color-ai-bubble":     "#FFFFFF",
+  "--color-ai-bubble-border": "#D4D0F0",
+  "--color-sidebar":       "#FFFFFF",
+  "--color-input-bg":      "#FFFFFF",
+  "--shadow-glow":         "0 0 20px rgba(124,58,237,0.25)",
+} as const;
