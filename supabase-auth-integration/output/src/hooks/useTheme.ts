@@ -23,27 +23,22 @@ function applyTheme(theme: Theme) {
 export function useTheme() {
   // Always start with "dark" so server and client first paint match.
   // The inline script in layout.tsx sets data-theme before React hydrates.
-  const [theme, setTheme] = useState<Theme>(() =>
-    typeof window === "undefined" ? "dark" : readTheme()
-  );
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      setMounted(true);
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
+    const current = readTheme();
+    applyTheme(current);
+    setTheme(current);
+    setMounted(true);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    setTheme((prev) => {
+      const next: Theme = prev === "dark" ? "light" : "dark";
+      applyTheme(next);
+      return next;
+    });
   }, []);
 
   return { theme, toggleTheme, mounted };

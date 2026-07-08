@@ -45,44 +45,21 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
 
   return (
     <div className="px-4 pb-4 pt-2">
-      {/* Suggestions (empty state) */}
-      <AnimatePresence>
-        {!value && !isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            className="flex flex-wrap gap-2 mb-3 justify-center"
-          >
-            {SUGGESTIONS.map((s, i) => (
-              <motion.button
-                key={s}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.06 }}
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setValue(s)}
-                className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-zinc-400 hover:text-zinc-200 hover:border-violet-500/40 hover:bg-violet-500/8 transition-all"
-              >
-                {s}
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Input container */}
       <motion.div
         animate={{
-          borderColor: focused ? "rgba(124,58,237,0.6)" : "rgba(255,255,255,0.1)",
           boxShadow: focused ? "0 0 0 1px rgba(124,58,237,0.3), 0 8px 32px rgba(124,58,237,0.15)" : "0 0 0 0px transparent",
         }}
         transition={{ duration: 0.2 }}
-        className="relative rounded-2xl border overflow-hidden" style={{ background: "var(--color-input-bg)", borderColor: "var(--color-border)" }}
+        className="relative rounded-2xl border overflow-hidden"
+        style={{
+          background: "var(--color-input-bg)",
+          borderColor: focused ? "rgba(124,58,237,0.6)" : "var(--color-border)",
+        }}
       >
         {/* Toolbar top */}
-        <div className="flex items-center gap-1 px-3 pt-2.5 pb-1">
+        {/* <div className="flex items-center gap-1 px-3 pt-2.5 pb-1">
           {[
             { icon: Globe, label: "Web search" },
             { icon: Image, label: "Image" },
@@ -93,12 +70,21 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               title={label}
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/8 transition-all"
+              className="p-1.5 rounded-lg transition-all"
+              style={{ color: "var(--color-icon)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--color-icon-hover)";
+                e.currentTarget.style.background = "var(--color-hover-bg-strong)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--color-icon)";
+                e.currentTarget.style.background = "transparent";
+              }}
             >
               <Icon size={14} />
             </motion.button>
           ))}
-        </div>
+        </div> */}
 
         {/* Textarea */}
         <textarea
@@ -110,30 +96,37 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
           onBlur={() => setFocused(false)}
           placeholder="Ask Nexus anything…"
           rows={1}
-          className="w-full bg-transparent px-4 py-2 text-sm resize-none focus:outline-none leading-relaxed"
-style={{ color: "var(--color-text)", caretColor: "var(--color-accent)" }}
+          className="w-full bg-transparent px-4 py-2 text-sm resize-none focus:outline-none leading-relaxed placeholder:text-[var(--color-placeholder)]"
+          style={{ color: "var(--color-text)", caretColor: "var(--color-accent)" }}
         />
 
         {/* Bottom bar */}
         <div className="flex items-center justify-between px-3 pb-2.5">
-          <div className="flex items-center gap-2 text-zinc-600 text-[10px]">
+          <div className="flex items-center gap-2 text-[10px]" style={{ color: "var(--color-text-muted)" }}>
             <Sparkles size={11} className="text-violet-500" />
             <span>Nexus 2.0</span>
-            <span className="text-zinc-700">·</span>
+            <span style={{ color: "var(--color-disabled)" }}>·</span>
             <span>Shift+Enter for new line</span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            {/* Mic */}
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/8 transition-all"
+              className="p-1.5 rounded-lg transition-all"
+              style={{ color: "var(--color-icon)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--color-icon-hover)";
+                e.currentTarget.style.background = "var(--color-hover-bg-strong)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--color-icon)";
+                e.currentTarget.style.background = "transparent";
+              }}
             >
               <Mic size={14} />
             </motion.button>
 
-            {/* Send */}
             <motion.button
               whileHover={canSend ? { scale: 1.05 } : {}}
               whileTap={canSend ? { scale: 0.95 } : {}}
@@ -141,14 +134,15 @@ style={{ color: "var(--color-text)", caretColor: "var(--color-accent)" }}
               disabled={!canSend}
               className={cn(
                 "flex items-center justify-center w-8 h-8 rounded-xl transition-all",
-                canSend
-                  ? "text-white cursor-pointer"
-                  : "text-zinc-700 cursor-not-allowed bg-white/5"
+                canSend ? "text-white cursor-pointer" : "cursor-not-allowed"
               )}
               style={canSend ? {
                 background: "linear-gradient(135deg, #7C3AED, #22D3EE)",
                 boxShadow: "0 0 16px rgba(124,58,237,0.5)",
-              } : {}}
+              } : {
+                color: "var(--color-disabled)",
+                background: "var(--color-hover-bg)",
+              }}
             >
               <AnimatePresence mode="wait">
                 {isLoading ? (
@@ -164,7 +158,8 @@ style={{ color: "var(--color-text)", caretColor: "var(--color-accent)" }}
                         key={i}
                         animate={{ y: [-2, 2, -2] }}
                         transition={{ repeat: Infinity, duration: 0.7, delay: i * 0.15 }}
-                        className="w-1 h-1 rounded-full bg-zinc-400"
+                        className="w-1 h-1 rounded-full"
+                        style={{ background: "var(--color-text-muted)" }}
                       />
                     ))}
                   </motion.div>
@@ -184,7 +179,7 @@ style={{ color: "var(--color-text)", caretColor: "var(--color-accent)" }}
         </div>
       </motion.div>
 
-      <p className="text-center text-[10px] text-zinc-700 mt-2">
+      <p className="text-center text-[10px] mt-2" style={{ color: "var(--color-text-muted)" }}>
         Nexus can make mistakes. Verify important information.
       </p>
     </div>

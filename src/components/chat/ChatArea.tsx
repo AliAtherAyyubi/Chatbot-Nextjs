@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Zap, Globe, Code2, BookOpen, Palette } from "lucide-react";
+import { Code2, Globe, BookOpen, Palette } from "lucide-react";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import type { Message } from "@/types";
@@ -30,24 +30,8 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
 
   return (
     <div className="flex flex-col h-full" style={{
-  background: `radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.08) 0%, var(--color-bg) 60%)`
-}}>
-      {/* Header */}
-      {/* <div className="flex items-center justify-between px-6 py-4 border-b border-white/6">
-        <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-violet-400" />
-          <span className="text-zinc-300 text-sm font-medium" style={{ fontFamily: "var(--font-syne)" }}>
-            {activeConversationId ? "Active conversation" : "New conversation"}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2.5 py-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Online
-          </div>
-        </div>
-      </div> */}
-
+      background: `radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.08) 0%, var(--color-bg) 60%)`
+    }}>
       {/* Messages / Empty state */}
       <div className="flex-1 overflow-y-auto">
         <AnimatePresence mode="wait">
@@ -57,7 +41,7 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center h-full px-6 py-12"
+              className="flex flex-col items-center h-full justify-center px-4"
             >
               {/* Hero logo */}
               <motion.div
@@ -68,7 +52,7 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
               >
                 <div
                   className="w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-black text-white relative z-10"
-                  style={{ background: "linear-gradient(135deg, #7C3AED, #22D3EE)", fontFamily: "var(--font-syne)" }}
+                  style={{ background: "linear-gradient(135deg, #7C3AED, #22D3EE)" }}
                 >
                   N
                 </div>
@@ -76,7 +60,6 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
                   className="absolute inset-0 rounded-3xl blur-2xl opacity-50"
                   style={{ background: "linear-gradient(135deg, #7C3AED, #22D3EE)" }}
                 />
-                {/* Orbiting dot */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
@@ -90,22 +73,23 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="text-3xl font-bold text-white mb-2 text-center"
-                style={{ fontFamily: "var(--font-syne)" }}
+                className="text-3xl font-bold mb-2 text-center"
+                style={{ color: "var(--color-text)" }}
               >
-                How can I help you?
+                How can I help you today?
               </motion.h1>
-              <motion.p
+              {/* <motion.p
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.22 }}
-                className="text-zinc-500 text-sm text-center mb-10 max-w-sm"
+                className="text-sm text-center mb-10 max-w-sm"
+                style={{ color: "var(--color-text-muted)" }}
               >
                 I&apos;m Nexus — your intelligent AI assistant. Ask me anything.
-              </motion.p>
+              </motion.p> */}
 
               {/* Capability cards */}
-              <div className="grid grid-cols-2 gap-3 w-full max-w-md">
+              {/* <div className="grid grid-cols-2 gap-3 w-full max-w-md">
                 {CAPABILITIES.map(({ icon: Icon, label, desc }, i) => (
                   <motion.div
                     key={label}
@@ -113,16 +97,28 @@ export default function ChatArea({ messages, isLoading, onSend, activeConversati
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ delay: 0.3 + i * 0.07, type: "spring" }}
                     whileHover={{ scale: 1.03, y: -2 }}
-                    className="p-4 rounded-2xl border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-violet-500/5 transition-all cursor-pointer group"
+                    className="p-4 rounded-2xl transition-all cursor-pointer group"
+                    style={{
+                      background: "var(--color-card-bg)",
+                      border: "1px solid var(--color-card-border)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(124,58,237,0.3)";
+                      e.currentTarget.style.background = "rgba(124,58,237,0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--color-card-border)";
+                      e.currentTarget.style.background = "var(--color-card-bg)";
+                    }}
                   >
                     <div className="w-8 h-8 rounded-xl bg-violet-500/15 flex items-center justify-center mb-2.5 group-hover:bg-violet-500/25 transition-all">
                       <Icon size={15} className="text-violet-400" />
                     </div>
-                    <p className="text-zinc-200 text-xs font-semibold mb-0.5">{label}</p>
-                    <p className="text-zinc-600 text-[11px] leading-relaxed">{desc}</p>
+                    <p className="text-xs font-semibold mb-0.5" style={{ color: "var(--color-text)" }}>{label}</p>
+                    <p className="text-[11px] leading-relaxed" style={{ color: "var(--color-text-muted)" }}>{desc}</p>
                   </motion.div>
                 ))}
-              </div>
+              </div> */}
             </motion.div>
           ) : (
             <motion.div

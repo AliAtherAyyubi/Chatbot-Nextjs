@@ -1,6 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import { Copy, ThumbsUp, ThumbsDown, RotateCcw, Check } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useState } from "react";
 import { cn, formatTime } from "@/utils";
 import type { Message } from "@/types";
@@ -19,26 +21,6 @@ export default function MessageBubble({ message, index }: MessageBubbleProps) {
     await navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  // Render markdown-lite (bold, newlines)
-  const renderContent = (text: string) => {
-    const lines = text.split("\n");
-    return lines.map((line, i) => {
-      const parts = line.split(/(\*\*[^*]+\*\*)/g);
-      return (
-        <span key={i}>
-          {parts.map((part, j) =>
-            part.startsWith("**") && part.endsWith("**") ? (
-              <strong key={j} className="font-semibold text-white">{part.slice(2, -2)}</strong>
-            ) : (
-              <span key={j}>{part}</span>
-            )
-          )}
-          {i < lines.length - 1 && <br />}
-        </span>
-      );
-    });
   };
 
   return (
@@ -79,63 +61,168 @@ export default function MessageBubble({ message, index }: MessageBubbleProps) {
         <div
           className={cn(
             "relative px-4 py-3 rounded-2xl text-sm leading-relaxed",
-            isUser
-              ? "text-white rounded-tr-sm"
-              : "text-zinc-200 rounded-tl-sm border border-white/8"
+            isUser ? "text-white rounded-tr-sm" : "rounded-tl-sm"
           )}
           style={
             isUser
-              ? { background: "linear-gradient(135deg, #7C3AED 0%, #8B5CF6 60%, #22D3EE 100%)", boxShadow: "0 4px 24px rgba(124,58,237,0.3)" }
-              : {background: "var(--color-ai-bubble)", border: "1px solid var(--color-ai-bubble-border)" }
+              ? {
+                  background: "linear-gradient(135deg, #7C3AED 0%, #8B5CF6 60%, #22D3EE 100%)",
+                  boxShadow: "0 4px 24px rgba(124,58,237,0.3)",
+                }
+              : {
+                  background: "var(--color-ai-bubble)",
+                  border: "1px solid var(--color-ai-bubble-border)",
+                  color: "var(--color-text)",
+                }
           }
         >
-          {renderContent(message.content)}
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              p: ({ children }) => (
+                <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+              ),
+              strong: ({ children }) => (
+                <strong
+                  className="font-semibold"
+                  style={{ color: isUser ? "#fff" : "var(--color-text)" }}
+                >
+                  {children}
+                </strong>
+              ),
+              em: ({ children }) => (
+                <em className="italic">{children}</em>
+              ),
+              h1: ({ children }) => (
+                <h1 className="text-lg font-bold mb-2 mt-3 first:mt-0">{children}</h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-sm font-semibold mb-1.5 mt-2 first:mt-0">{children}</h3>
+              ),
+              ul: ({ children }) => (
+                <ul className="mb-2 ml-4 space-y-1 list-disc">{children}</ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="mb-2 ml-4 space-y-1 list-decimal">{children}</ol>
+              ),
+              li: ({ children }) => (
+                <li className="text-sm leading-relaxed">{children}</li>
+              ),
+              code: ({ inline, children }: { inline?: boolean; children?: React.ReactNode }) =>
+                inline ? (
+                  <code
+                    className="px-1.5 py-0.5 rounded text-xs font-mono"
+                    style={{
+                      background: isUser ? "rgba(255,255,255,0.2)" : "var(--color-overlay)",
+                      color: isUser ? "#fff" : "var(--color-cyan, #22D3EE)",
+                    }}
+                  >
+                    {children}
+                  </code>
+                ) : (
+                  <pre
+                    className="rounded-xl p-3 my-2 overflow-x-auto text-xs font-mono leading-relaxed"
+                    style={{ background: "var(--color-bg)" }}
+                  >
+                    <code>{children}</code>
+                  </pre>
+                ),
+              blockquote: ({ children }) => (
+                <blockquote
+                  className="border-l-2 border-violet-400 pl-3 my-2 italic"
+                  style={{ color: "var(--color-text-sub)" }}
+                >
+                  {children}
+                </blockquote>
+              ),
+              hr: () => (
+                <hr
+                  className="my-3 border-none h-px"
+                  style={{ background: "var(--color-border)" }}
+                />
+              ),
+              a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-violet-400 hover:text-violet-300"
+                >
+                  {children}
+                </a>
+              ),
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
 
-          {/* Streaming cursor */}
-          {/* REPLACE this block in your MessageBubble */}
-{message.isStreaming && (
-  <>
-    {/* Show loading dots ONLY when content is empty (waiting for first chunk) */}
-    {message.content === "" ? (
-      <div className="flex items-center gap-1.5 py-1">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            animate={{ y: [-3, 3, -3], opacity: [0.4, 1, 0.4] }}
-            transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.18, ease: "easeInOut" }}
-            className="w-2 h-2 rounded-full"
-            style={{ background: "linear-gradient(135deg, #7C3AED, #22D3EE)" }}
-          />
-        ))}
-      </div>
-    ) : (
-      // Show blinking cursor while text is streaming in
-      <motion.span
-        animate={{ opacity: [1, 0, 1] }}
-        transition={{ repeat: Infinity, duration: 0.7 }}
-        className="inline-block w-0.5 h-4 bg-violet-400 ml-0.5 align-middle rounded-full"
-      />
-    )}
-  </>
-)}
+          {/* Streaming indicator */}
+          {message.isStreaming && (
+            <>
+              {message.content === "" ? (
+                <div className="flex items-center gap-1.5 py-1">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ y: [-3, 3, -3], opacity: [0.4, 1, 0.4] }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 0.8,
+                        delay: i * 0.18,
+                        ease: "easeInOut",
+                      }}
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: "linear-gradient(135deg, #7C3AED, #22D3EE)" }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <motion.span
+                  animate={{ opacity: [1, 0, 1] }}
+                  transition={{ repeat: Infinity, duration: 0.7 }}
+                  className="inline-block w-0.5 h-4 bg-violet-400 ml-0.5 align-middle rounded-full"
+                />
+              )}
+            </>
+          )}
         </div>
 
         {/* Meta row */}
-        <div className={cn(
-          "flex items-center gap-2 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity",
-          isUser ? "flex-row-reverse" : "flex-row"
-        )}>
-          <span className="text-zinc-600 text-[10px]">{formatTime(message.timestamp)}</span>
+        <div
+          className={cn(
+            "flex items-center gap-2 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity",
+            isUser ? "flex-row-reverse" : "flex-row"
+          )}
+        >
+          <span
+            className="text-[10px]"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {formatTime(message.timestamp)}
+          </span>
 
           {!isUser && !message.isStreaming && (
             <div className="flex items-center gap-1">
               <ActionButton onClick={handleCopy} title="Copy">
-                {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                {copied ? (
+                  <Check size={11} className="text-emerald-400" />
+                ) : (
+                  <Copy size={11} />
+                )}
               </ActionButton>
-              <ActionButton onClick={() => setLiked(liked === "up" ? null : "up")} title="Good response">
+              <ActionButton
+                onClick={() => setLiked(liked === "up" ? null : "up")}
+                title="Good response"
+              >
                 <ThumbsUp size={11} className={liked === "up" ? "text-violet-400" : ""} />
               </ActionButton>
-              <ActionButton onClick={() => setLiked(liked === "down" ? null : "down")} title="Bad response">
+              <ActionButton
+                onClick={() => setLiked(liked === "down" ? null : "down")}
+                title="Bad response"
+              >
                 <ThumbsDown size={11} className={liked === "down" ? "text-rose-400" : ""} />
               </ActionButton>
               <ActionButton onClick={() => {}} title="Regenerate">
@@ -149,14 +236,31 @@ export default function MessageBubble({ message, index }: MessageBubbleProps) {
   );
 }
 
-function ActionButton({ children, onClick, title }: { children: React.ReactNode; onClick: () => void; title: string }) {
+function ActionButton({
+  children,
+  onClick,
+  title,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  title: string;
+}) {
   return (
     <motion.button
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
       title={title}
-      className="p-1 rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-white/8 transition-all"
+      className="p-1 rounded-md transition-all"
+      style={{ color: "var(--color-icon)" }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = "var(--color-icon-hover)";
+        e.currentTarget.style.background = "var(--color-hover-bg-strong)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = "var(--color-icon)";
+        e.currentTarget.style.background = "transparent";
+      }}
     >
       {children}
     </motion.button>

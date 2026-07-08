@@ -9,8 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        syne: ["var(--font-syne)", "sans-serif"],
-        dm: ["var(--font-dm)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       colors: {
@@ -30,7 +29,5 @@ const config: Config = {
   },
   plugins: [],
 };
-module.exports = {
-  darkMode: "class",  // enables class-based dark mode
-}
+
 export default config;

@@ -54,8 +54,6 @@ export function useChat() {
 
   // ── Select a conversation and load its messages ──
   const selectConversation = useCallback(async (id: string) => {
-    if (id === activeConversationId) return;
-
     setActiveConversationId(id);
     setMessages([]);
     setIsLoading(true);
@@ -94,30 +92,11 @@ export function useChat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   // ── New conversation ──
   const newConversation = useCallback(() => {
     setActiveConversationId(null);
     setMessages([]);
   }, []);
-
-  // delete chat
-  // ✅ ADD this new function before the return statement
-const deleteConversation = useCallback(async (id: string) => {
-  try {
-    await fetch(`/api/conversations/${id}`, { method: "DELETE" });
-
-    setConversations((prev) => prev.filter((c) => c.id !== id));
-
-    // If deleted conversation was active, clear chat
-    if (activeConversationId === id) {
-      setActiveConversationId(null);
-      setMessages([]);
-    }
-  } catch (err) {
-    console.error("Failed to delete conversation", err);
-  }
-}, [activeConversationId]);
 
   // ── Send message with real Gemini streaming ──
   const sendMessage = useCallback(async (content: string) => {
@@ -271,6 +250,5 @@ const deleteConversation = useCallback(async (id: string) => {
     selectConversation,
     newConversation,
     sendMessage,
-    deleteConversation,
   };
 }
