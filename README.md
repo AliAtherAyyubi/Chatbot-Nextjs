@@ -10,6 +10,8 @@ A production-ready AI chatbot application built with **Next.js 16**, **Supabase*
 
 ---
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-7C3AED?style=for-the-badge&logo=vercel)](https://nexus-ai-drab-eight.vercel.app/)
+
 ## ✨ Features
 
 ### 🤖 AI & Chat
@@ -290,8 +292,9 @@ vercel --prod
 ## 📸 Screenshots
 
 
-
+### Login
 ![Login](./public/screenshots/login.png)
+### Chat
 ![Chat](./public/screenshots/dashboard.png)
 
 ---
